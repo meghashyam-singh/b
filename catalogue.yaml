@@ -48,6 +48,7 @@
      ansible.builtin.unarchive:
        src: /tmp/catalogue.zip
        dest: /app
+       remote_src: yes
 
    - name: install dependencies
      ansible.builtin.npm:
@@ -76,3 +77,7 @@
    - name: print the result of databses, tables, exists
      ansible.builtin.debug:
        msg: "{{ mongodb }}"
+
+   #- name: load database
+     #ansible.builtin.command: mongosh --host mongodb.devops-project.co.uk </app/db/master-data.js
+     #when: mongodb.
