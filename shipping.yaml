@@ -67,11 +67,18 @@
        login_host: mysql.devops-project.co.uk
        login_user: root
        login_password: RoboShop@1
-       target: { item }
-       loop:
-        - /app/db/schema.sql
-        - /app/db/app-user.sql
-        - /app/db/master-data.sql
+       target: "{{ item }}"
+     loop:
+       - /app/db/schema.sql
+       - /app/db/app-user.sql
+       - /app/db/master-data.sql
+
+   - name: start service
+     ansible.built.systemd_service:
+       name: shipping
+       daemon-reload: true
+       state: started
+       enabled: yes
        
 
     
