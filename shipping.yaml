@@ -74,7 +74,7 @@
        - /app/db/master-data.sql
 
    - name: start service
-     ansible.built.systemd_service:
+     ansible.builtin.systemd_service:
        name: shipping
        daemon-reload: true
        state: started
