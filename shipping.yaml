@@ -34,7 +34,7 @@
        dest: /app
 
    - name: install dependecies
-     ansible.builtin.comamnd: mvn clean package
+     ansible.builtin.command: mvn clean package
      args:
        chdir: /app
 
