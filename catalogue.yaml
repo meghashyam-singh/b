@@ -68,7 +68,7 @@
    - name: install mongo client
      ansible.builtin.package:
        name: mongodb-mongosh
-       state: presnet
+       state: present
 
    - name: check databses, tables, exists
      ansible.builtin.shell: mongosh mongodb.devops-project.co.uk --quiet --eval "db.getMongo().getDBNames().indexOf('catalogue')"
@@ -79,5 +79,5 @@
        msg: "{{ mongodb }}"
 
    #- name: load database
-     #ansible.builtin.command: mongosh --host mongodb.devops-project.co.uk </app/db/master-data.js
+     #ansible.builtin.shell: mongosh --host mongodb.devops-project.co.uk </app/db/master-data.js
      #when: mongodb.
