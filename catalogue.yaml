@@ -70,7 +70,7 @@
        state: presnet
 
    - name: check databses, tables, exists
-     ansible.builtin.comand: mongosh mongodb.devops-project.co.uk --quiet --eval "db.getMongo().getDBNames().indexOf('catalogue')"
+     ansible.builtin.shell: mongosh mongodb.devops-project.co.uk --quiet --eval "db.getMongo().getDBNames().indexOf('catalogue')"
      register: mongodb
 
    - name: print the result of databses, tables, exists
