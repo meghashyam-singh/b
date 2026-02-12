@@ -49,9 +49,23 @@
        src: shipping.service
        dest: /etc/systemd/system/shipping.service
 
-   #- name: install mysql
-     #ansible.builtin.package:
-       #name: mysql
-       #state: present
+   - name: install mysql
+     ansible.builtin.package:
+       name: mysql
+       state: present
+
+   - name: load database
+     community.mysql.mysql_db:
+       state: dump
+       name: all
+       login_host: mysql.devops-project.co.uk
+       login_user: root
+       login_password: RoboShop@1
+       target: { item }
+       loop:
+        - /app/db/schema.sql
+        - /app/db/app-user.sql
+        - /app/db/master-data.sql
+       
 
     
