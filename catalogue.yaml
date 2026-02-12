@@ -1,0 +1,78 @@
+---
+- name: setup catalogue
+  hosts: catalogue.devops-project.co.uk
+  become: yes
+
+  tasks:
+   - name: disable nodejs
+     ansible.builtin.command: dnf module disable nodejs -y
+
+   - name: enable nodejs
+     ansible.builtin.command: dnf module enable nodejs:20 -y
+
+   - name: install nodejs
+     ansible.builtin.package:
+       name: nodejs
+       state: present
+
+   - name: craete system user
+     ansible.builtin.user:
+       name: roboshop
+       state: present
+       system: true
+       comment: system user
+       home: /app
+       shell: /sbin/nologin
+   
+   - name: delete folder
+     ansible.builtin.file:
+       path: /app
+       state: absent
+
+   - name: craete folder
+     ansible.builtin.file:
+       path: /app
+       state: directory
+
+   - name: delete catalogue file
+     ansible.builtin.file:
+       path: /tmp/catalogue.zip
+       state: absent
+
+   - name: download code
+     ansible.builtin.get_url:
+       url: "https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip"
+       dest: /tmp/catalogue.zip
+
+   - name: unzip code
+     ansible.builtin.unarchive:
+       src: /tmp/catalogue.zip
+       dest: /app
+
+   - name: install dependencies
+     ansible.builtin.npm:
+       path: /app
+       state: present
+
+   - name: create systemctl service
+     ansible.builtin.copy:
+       src: catalogue.service
+       dest: /etc/systemd/system/catalogue.service
+
+   - name: add mongodb repo
+     ansible.builtin.copy:
+       src: mongo.repo
+       dest: /etc/yum.repos.d/mongo.repo
+
+   - name: install mongo client
+     ansible.builtin.package:
+       name: mongodb-mongosh
+       state: presnet
+
+   - name: check databses, tables, exists
+     ansible.builtin.comand: mongosh mongodb.devops-project.co.uk --quiet --eval "db.getMongo().getDBNames().indexOf('catalogue')"
+     register: mongodb
+
+   - name: print the result of databses, tables, exists
+     ansible.builtin.debug:
+       msg: "{{ mongodb }}"
