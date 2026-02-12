@@ -78,6 +78,21 @@
      ansible.builtin.debug:
        msg: "{{ mongodb }}"
 
-   #- name: load database
-     #ansible.builtin.shell: mongosh --host mongodb.devops-project.co.uk </app/db/master-data.js
-     #when: mongodb.
+   - name: load database
+     ansible.builtin.shell: mongosh --host mongodb.devops-project.co.uk </app/db/master-data.js
+     when: mongodb.stdout | int == -1
+
+   - name: start service
+     ansible.builtin.systemd_service:
+       name: catalogue
+       daemon-reload: true
+       state: started
+       enabled: yes
+
+   - name: check url
+     ansible.builtin.command: curl http://catalogue.devops-project.co.uk:8080/health
+     register: catalogue
+
+   - name: print status
+     ansible.builtin.debug:
+       mgs: "{{ catalogue }}"
