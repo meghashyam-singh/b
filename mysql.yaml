@@ -1,0 +1,27 @@
+---
+- name: setup mysql
+  hosts: mysql.devops-project.co.uk
+  become: yes
+
+  tasks:
+   - name: install mysql-server
+     ansible.builtin.package:
+       name: mysql-server
+       state: present
+
+   - name: start and enable mysql-server
+     ansible.builtin.service:
+       name: mysqld
+       state: started
+       enabled: yes
+
+   - name: set root password
+     ansible.builtin.command: mysql_secure_installation -set-root-pass RoboShop@1
+
+   - name: check mysql status
+     ansible.builtin.command: systemctl status mysqld
+     register: sql
+
+   - name: print mysql status
+     ansible.builtin.debug:
+       msg: "{{ sql }}"
