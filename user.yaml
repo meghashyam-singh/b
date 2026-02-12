@@ -60,6 +60,6 @@
      ansible.builtin.command: curl http://user.devops-project.co.uk:8080/health
      register: user
 
-   - name: name: print sttaus
+   - name: print sttaus
      ansible.builtin.debug:
        msg: "{{ user }}"
