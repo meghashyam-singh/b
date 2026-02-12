@@ -1,0 +1,42 @@
+---
+- name: setup redis
+  hosts: redis.devops-project.co.uk
+  become: yes
+
+  tasks:
+   - name: disable redis
+     ansible.builtin.command: dnf module diasble redis -y
+
+   - name: enable redis
+     ansible.builtin.command: dnf module enable redis -y
+
+   - name: install redis
+     ansible.builtin.package:
+      name: redis
+      state: present
+
+   - name: change config - allow all
+     ansible.builtin.replace:
+       path: /etc/redis/redis.conf
+       regexp: '127.0.0.1'
+       replace: '0.0.0.0'
+
+   - name: change protected mode
+     ansible.builtin.lineinfile:
+       path: /etc/redis/redis.conf
+       regexp: 'protected-mode'
+       line: 'protected-mode no'
+
+   - name: start and enable redis
+     ansible.builtin.service:
+       name: redis
+       state: started
+       enabled: yes
+
+   - name: check redis port
+     ansible.builtin.command: netstat -lntp
+     register: redis
+
+   - name: print redis port
+     ansible.builtin.debug:
+       msg: "{{ redis }}"
