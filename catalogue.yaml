@@ -95,4 +95,4 @@
 
    - name: print status
      ansible.builtin.debug:
-       mgs: "{{ catalogue }}"
+       msg: "{{ catalogue }}"
