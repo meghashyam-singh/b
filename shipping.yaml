@@ -29,7 +29,7 @@
        dest: /tmp/shipping.zip
 
    - name: unzip code
-     ansible.builtin.copy:
+     ansible.builtin.unarchive:
        src: /tmp/shipping.zip
        dest: /app
        remote_src: yes
