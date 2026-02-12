@@ -6,7 +6,7 @@
   tasks:
    - name: install maven
      ansible.builtin.package:
-       name: " {{ item }} "
+       name: "{{ item }}"
        state: present
      loop:
       - maven
@@ -81,12 +81,12 @@
        enabled: yes
 
    - name: check shipping status
-     ansible.builtin.command: curl http://shipping.devops-project.co.uk:8080/health
+     ansible.builtin.command: curl http://localhost:8080/health
      register: shipping
 
    - name: print
      ansible.builtin.debug:
-       msg: "{{ shipping }}"
+       msg: "{{ shipping.stdout }}"
        
 
     
