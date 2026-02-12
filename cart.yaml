@@ -1,0 +1,65 @@
+---
+- name: setup cart
+  hosts: cart.devops-project.co.uk
+  become: yes
+
+  tasks:
+   - name: diasbale nodejs
+     ansible.builtin.command: dnf module disable nodejs -y
+
+   - name: enable nodejs
+     ansible.builtin.command: dnf module enable nodejs -y
+
+   - name: install nodejs
+     ansible.builtin.package:
+       name: nodejs
+       state: present
+
+   - name: create user
+     ansible.builtin.user:
+       name: roboshop
+       state: present
+       system: true
+       comment: sys user
+       home: /app
+       shell: /sbin/nologin
+
+   - name: craeted folder
+     ansible.builtin.file:
+       path: /app
+       state: present
+
+   - name: download code
+     ansible.builtin.get_url:
+       url: "https://roboshop-artifacts.s3.amazonaws.com/cart-v3.zip"
+       dest: /tmp/cart.zip
+
+   - name: unzip code
+     ansible.builtin.unarchive:
+       src: /tmp/cart.zip
+       dest: /app
+
+   - name: install dependencies
+     ansible.builtin.npm:
+       path: /app
+       state: present
+
+   - name: craete sys service
+     ansible.builtin.copy:
+       src: cart.service
+       dest: /etc/systemd/system/cart.service
+
+   - name: start and enable
+     ansible.builtin.systemd_service:
+       name: cart
+       daemon-reload: true
+       state: started
+       enabled: yes
+
+   - name: check cart service
+     ansible.builtin.command: curl http://cart.devops-project.co.uk:8080/health
+     register: cart
+
+   - name: print status
+     ansible.builtin.debug:
+       msg: "{{ cart }}"
